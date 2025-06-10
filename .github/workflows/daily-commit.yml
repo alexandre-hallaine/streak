@@ -1,0 +1,32 @@
+name: Daily Commit for GitHub Streak
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  daily-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GIT_NAME"
+          git config user.email "$GIT_EMAIL"
+        env:
+          GIT_NAME: ${{ vars.GIT_NAME }}
+          GIT_EMAIL: ${{ vars.GIT_EMAIL }}
+
+      - name: Create and push empty commit
+        run: |
+          git commit --allow-empty -m "chore: Daily empty commit"
+          git push
